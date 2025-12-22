@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import re
 import os
+import sys
 import queue
 import subprocess
 import threading
@@ -94,7 +95,22 @@ def windows_escape(prompt):
     result = result.replace("'", "\\'")
     return result
 
+
+def configure_windows_stdio() -> None:
+    """Configure stdout/stderr to use UTF-8 encoding on Windows."""
+    if os.name != "nt":
+        return
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            try:
+                reconfigure(encoding="utf-8")
+            except (ValueError, OSError):
+                pass
+
+
 def main():
+    configure_windows_stdio()
     parser = argparse.ArgumentParser(description="Codex Bridge")
     parser.add_argument("--PROMPT", required=True, help="Instruction for the task to send to codex.")
     parser.add_argument("--cd", required=True, help="Set the workspace root for codex before executing the task.")
