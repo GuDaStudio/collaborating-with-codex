@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Codex Bridge Script for Claude Agent Skills.
 Wraps the Codex CLI to provide a JSON-based interface for Claude.
